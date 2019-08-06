@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  shortener:
+    image: 'serubin/mini-shortener'
+    restart: always
+    build: ./shortener
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_SETTINGS=project.config.BaseConfig
+    command: /usr/local/bin/gunicorn -w 2 -b :8000 core:app
