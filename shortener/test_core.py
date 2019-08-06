@@ -9,7 +9,7 @@ class CoreTest(unittest.TestCase):
         self.alias = "qsepu"
 
         self.app = app # Provide app to the entire test suite
-        self.app.config.from_object(TestingConfig)
+        self.app.config.from_object(TestConfig)
 
         self.client = self.app.test_client()
 

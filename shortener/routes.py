@@ -34,7 +34,6 @@ def create_url():
 @shortener_blueprint.route('/<url_id>', methods=['GET'])
 @shortener_blueprint.route('/<url_id>/', methods=['GET'])
 def get_url_info(url_id):
-    print(url_id, url_table)
     url = get_url_by_alias(url_id)
     if not url:
         return jsonify("Error: no url found")
