@@ -1,10 +1,9 @@
 from flask import Blueprint, request, jsonify, redirect, current_app as app
 import time, hashlib, base64
+from models import Url
 
 redirect_blueprint = Blueprint('redirect', __name__, url_prefix='/')
 shortener_blueprint = Blueprint('shortener', __name__, url_prefix='/url')
-
-url_table = {}
 
 @redirect_blueprint.route('/<url_id>', methods=['GET'])
 @redirect_blueprint.route('/<url_id>/', methods=['GET'])
@@ -23,7 +22,10 @@ def create_url():
 
     alias_hash = create_url_hash(data.get('url'), ip)
 
-    url_table[alias_hash] = data.get('url')
+    # TODO check if url exists
+    new_url = Url(url=data.get('url'), alias=alias_hash)
+    app.db.session.add(new_url)
+    app.db.session.commit()
 
     retval = {
         'alias': alias_hash,
@@ -39,14 +41,14 @@ def get_url_info(url_id):
         return jsonify("Error: no url found")
 
     retval = {
-        'alias': url_id,
-        'url': url
+        'alias': url.alias,
+        'url': url.url
     }
 
     return jsonify(retval)
 
 def get_url_by_alias(alias):
-    return url_table.get(alias)
+    return Url.query.filter_by(alias=alias).first()
 
 def create_url_hash(url, ip):
     pre_hash_str = url + str(ip) + str(time.time() if not app.config['TESTING'] else "") # String to be hashed

@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 app.config.from_object(BaseConfig)
 
-app.db = SQLAlchemy(app)
+db = SQLAlchemy(app)
+app.db = db
 app.db.create_all()
 
 from routes import shortener_blueprint, redirect_blueprint
